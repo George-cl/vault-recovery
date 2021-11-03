@@ -1,10 +1,12 @@
+const { randomBytes } = require('crypto');
 
 const generate256RandomBits = () => {
-
+    // 256 / 8 = 32
+    return randomBytes(32);
 };
 
 const getSHA256hash = (bytes) => {
-
+    
 };
 
 const appendChecksum = (bytes, checksum) => {
