@@ -10,7 +10,8 @@ const getSHA256hash = (bytes) => {
 };
 
 const appendChecksum = (bytes, hash) => {
-    
+    let checksum = hash.slice(0,1);
+    return Buffer.concat([bytes, checksum]);
 };
 
 const generateMnemonicIndices = (bytes) => {
