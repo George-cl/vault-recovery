@@ -21,11 +21,9 @@ describe('My BIP39 implementation', () => {
         expect(sha256Hash.length).toEqual(32);
     });
 
-    it('should append the checksum', () => {
-        let checksum = sha256Hash[0];
-        expect(checksum.length).toEqual(8);
-
-        checksummedEntropy = initialEntropy.concat([initialEntropy, checksum]);
+    it('should compute and append the checksum', () => {
+        checksummedEntropy = bip39.appendChecksum(initialEntropy, sha256Hash);
+        expect(Buffer.isBuffer(checksummedEntropy)).toBeTruthy();
         expect(checksummedEntropy.length).toEqual(33);
     });
 

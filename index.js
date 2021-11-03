@@ -1,4 +1,4 @@
-const { randomBytes } = require('crypto');
+const { randomBytes, createHash } = require('crypto');
 
 const generate256RandomBits = () => {
     // 256 / 8 = 32
@@ -6,11 +6,11 @@ const generate256RandomBits = () => {
 };
 
 const getSHA256hash = (bytes) => {
-    
+    return createHash('sha256').update(bytes).digest();
 };
 
-const appendChecksum = (bytes, checksum) => {
-
+const appendChecksum = (bytes, hash) => {
+    
 };
 
 const generateMnemonicIndices = (bytes) => {
