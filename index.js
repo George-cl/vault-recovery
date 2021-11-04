@@ -1,5 +1,7 @@
 const { randomBytes, createHash, createHmac } = require('crypto');
 
+const PASSPHRASE = 'SIGNER';
+
 const generate256RandomBits = () => {
     // 256 / 8 = 32
     return randomBytes(32);
@@ -31,7 +33,7 @@ const generateMnemonic = (wordlist, indices) => {
 };
 
 const convertMnemonicToSeed = (mnemonic) => {
-    return createHmac('sha512', 'SIGNER')
+    return createHmac('sha512', PASSPHRASE)
         .update(mnemonic.join(''))
         .digest();
 };
