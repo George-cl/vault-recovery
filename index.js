@@ -20,12 +20,14 @@ const generateMnemonicIndices = (bytes) => {
         binary = binary + ('00000000' + bytes[i].toString(2)).slice(-8);
     }
     return binary.match(/.{1,11}/g).map(binaryChunk => {
-        return parseInt(binaryChunk, 2)
+        return parseInt(binaryChunk, 2);
     });
 };
 
 const generateMnemonic = (wordlist, indices) => {
-
+    return indices.map(index => {
+        return wordlist[index];
+    });
 };
 
 const convertMnemonicToSeed = (mnemonic) => {

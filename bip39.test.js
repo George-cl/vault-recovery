@@ -43,7 +43,7 @@ describe('My BIP39 implementation', () => {
         expect(Array.isArray(mnemonicPhrase)).toBeTruthy();
         for (i = 0; i < 24; i++) {
             let currentWord = mnemonicPhrase[i];
-            expect(currentWord instanceof String).toBeTruthy();
+            expect(typeof currentWord === 'string').toBeTruthy();
             expect(currentWord.length).toBeLessThanOrEqual(8)
             expect(currentWord.length).toBeGreaterThanOrEqual(3);
         }
