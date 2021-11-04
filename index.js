@@ -1,4 +1,4 @@
-const { randomBytes, createHash } = require('crypto');
+const { randomBytes, createHash, createHmac } = require('crypto');
 
 const generate256RandomBits = () => {
     // 256 / 8 = 32
@@ -31,7 +31,9 @@ const generateMnemonic = (wordlist, indices) => {
 };
 
 const convertMnemonicToSeed = (mnemonic) => {
-
+    return createHmac('sha512', 'SIGNER')
+        .update(mnemonic.join(''))
+        .digest();
 };
 
 module.exports = {
