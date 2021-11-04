@@ -1,7 +1,7 @@
-const bip39 = require('./index');
+const bip39 = require('./bip39');
 const wordlist = require('./wordlist/english');
 
-describe('My BIP39 implementation', () => {
+describe('BIP39 implementation', () => {
 
     var initialEntropy;
     var sha256Hash;
