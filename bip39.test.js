@@ -29,8 +29,8 @@ describe('My BIP39 implementation', () => {
 
     it('should generate mnemonic indices from checksummed entropy', () => {
         mnemonicIndices = bip39.generateMnemonicIndices(checksummedEntropy);
-        expect(mnemonicIndices.length).toEqual(11);
-        for (i=0; i<11; i++) {
+        expect(mnemonicIndices.length).toEqual(24);
+        for (i = 0; i < 24; i++) {
             let currentIndex = mnemonicIndices[i];
             expect(Number.isInteger(currentIndex)).toBeTruthy();
             expect(currentIndex).toBeLessThanOrEqual(2047);
@@ -41,7 +41,7 @@ describe('My BIP39 implementation', () => {
     it('should generate a mnemonic phrase from indices', () => {
         mnemonicPhrase = bip39.generateMnemonic(wordlist, mnemonicIndices);
         expect(Array.isArray(mnemonicPhrase)).toBeTruthy();
-        for (i=0; i<24; i++) {
+        for (i = 0; i < 24; i++) {
             let currentWord = mnemonicPhrase[i];
             expect(currentWord instanceof String).toBeTruthy();
             expect(currentWord.length).toBeLessThanOrEqual(8)
