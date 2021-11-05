@@ -8,6 +8,7 @@ describe('BIP39 implementation', () => {
     var checksummedEntropy;
     var mnemonicIndices;
     var mnemonicPhrase;
+    var seed;
 
     it('should randomly generate 256 bits', () => {
         initialEntropy = bip39.generate256RandomBits();
@@ -50,8 +51,13 @@ describe('BIP39 implementation', () => {
     });
 
     it('should convert the mnemonic to a 512-bit seed', () => {
-        let seed = bip39.convertMnemonicToSeed(mnemonicPhrase);
+        seed = bip39.convertMnemonicToSeed(mnemonicPhrase);
         expect(Buffer.isBuffer(seed)).toBeTruthy();
         expect(seed.length).toEqual(64);
+    });
+
+    it('should produce the same seed for the same mnemonic', () => {
+        let newSeed = bip39.convertMnemonicToSeed(mnemonicPhrase);
+        expect(newSeed).toEqual(seed);
     });
 });
