@@ -1,14 +1,20 @@
+// For Ed25519 key generation
+const nacl = require('tweetnacl-ts');
+// For Secp256k1 key generation
+const secp = require('secp256k1');
+
 const bip39 = require('./bip39');
 const wordlist = require('./wordlist/english');
 
 describe('BIP39 implementation', () => {
 
-    var initialEntropy;
-    var sha256Hash;
-    var checksummedEntropy;
-    var mnemonicIndices;
-    var mnemonicPhrase;
-    var seed;
+    var initialEntropy,
+        sha256Hash,
+        checksum,
+        checksummedEntropy,
+        mnemonicIndices,
+        mnemonicPhrase,
+        seed;
 
     it('should randomly generate 256 bits', () => {
         initialEntropy = bip39.generate256RandomBits();
@@ -23,7 +29,7 @@ describe('BIP39 implementation', () => {
     });
 
     it('should compute and append the checksum', () => {
-        checksummedEntropy = bip39.appendChecksum(initialEntropy, sha256Hash);
+        [checksum, checksummedEntropy] = bip39.appendChecksum(initialEntropy, sha256Hash);
         expect(Buffer.isBuffer(checksummedEntropy)).toBeTruthy();
         expect(checksummedEntropy.length).toEqual(33);
     });
@@ -60,4 +66,31 @@ describe('BIP39 implementation', () => {
         let newSeed = bip39.convertMnemonicToSeed(mnemonicPhrase);
         expect(newSeed).toEqual(seed);
     });
+
+    it('should derive (deterministically) ED25519 keypair from seed', () => {
+        let [from, to] = bip39.calculateSlice(checksum);
+        let keypair = nacl.sign_keyPair_fromSeed(seed.slice(from, to));
+
+        [from, to] = bip39.calculateSlice(checksum);
+        let keypair2 = nacl.sign_keyPair_fromSeed(seed.slice(from, to));
+
+        expect(keypair).toEqual(keypair2);
+    });
+
+    it('should derive (deterministically) SECP256k1 keypair from seed', () => {
+        let secretKey;
+        let [from, to] = bip39.calculateSlice(checksum);
+        secretKey = bip39.hmacSHA512(checksum, seed).slice(from, to);
+        if (!secp.privateKeyVerify(secretKey))
+            throw new Error('Invalid SECP256k1 key');
+
+        let secretKey2;
+        [from, to] = bip39.calculateSlice(checksum);
+        secretKey2 = bip39.hmacSHA512(checksum, seed).slice(from, to);
+        if (!secp.privateKeyVerify(secretKey2))
+            throw new Error('Invalid SECP256k1 key');
+
+        expect(secretKey).toEqual(secretKey2);
+    });
+
 });
