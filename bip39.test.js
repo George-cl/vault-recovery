@@ -2,7 +2,7 @@
 const nacl = require('tweetnacl-ts');
 // For Secp256k1 key generation
 const secp = require('secp256k1');
-const SDK = require('casper-js-sdk');
+const { Keys } = require('casper-js-sdk');
 
 const bip39 = require('./bip39');
 const wordlist = require('./wordlist/english');
@@ -97,29 +97,25 @@ describe('BIP39 implementation', () => {
     });
 
     it('should be able to construct keypair using SDK (ED25519)', () => {
-        let secretKey = SDK.Keys.Ed25519.parsePrivateKey(ed25519SecretKey)
-        let publicKey = SDK.Keys.Ed25519.privateToPublicKey(secretKey);
-        let keypair = SDK.Keys.Ed25519.parseKeyPair(publicKey, secretKey);
+        let bip39Keypair = bip39.keypairFromSecretKey(ed25519SecretKey, 'ed25519');
         
-        let sdkKeypair = SDK.Keys.Ed25519.new();
+        let sdkKeypair = Keys.Ed25519.new();
 
-        expect(keypair.publicKey.value().length).toEqual(sdkKeypair.publicKey.value().length);
-        expect(keypair.privateKey.length).toEqual(sdkKeypair.privateKey.length);
-        expect(keypair.accountHex().substring(0, 2)).toEqual(sdkKeypair.accountHex().substring(0, 2));
-        expect(keypair.signatureAlgorithm).toEqual('ed25519');
+        expect(bip39Keypair.publicKey.value().length).toEqual(sdkKeypair.publicKey.value().length);
+        expect(bip39Keypair.privateKey.length).toEqual(sdkKeypair.privateKey.length);
+        expect(bip39Keypair.accountHex().substring(0, 2)).toEqual(sdkKeypair.accountHex().substring(0, 2));
+        expect(bip39Keypair.signatureAlgorithm).toEqual('ed25519');
     });
 
     it('should be able to construct keypair using SDK (SECP256k1)', () => {
-        let secretKey = SDK.Keys.Secp256K1.parsePrivateKey(secp256k1SecretKey, 'raw')
-        let publicKey = SDK.Keys.Secp256K1.privateToPublicKey(secretKey);
-        let keypair = SDK.Keys.Secp256K1.parseKeyPair(publicKey, secretKey, 'raw');
+        let bip39Keypair = bip39.keypairFromSecretKey(secp256k1SecretKey, 'secp256k1');
         
-        let sdkKeypair = SDK.Keys.Secp256K1.new();
+        let sdkKeypair = Keys.Secp256K1.new();
 
-        expect(keypair.publicKey.value().length).toEqual(sdkKeypair.publicKey.value().length);
-        expect(keypair.privateKey.length).toEqual(sdkKeypair.privateKey.length);
-        expect(keypair.accountHex().substring(0, 2)).toEqual(sdkKeypair.accountHex().substring(0, 2));
-        expect(keypair.signatureAlgorithm).toEqual('secp256k1');
+        expect(bip39Keypair.publicKey.value().length).toEqual(sdkKeypair.publicKey.value().length);
+        expect(bip39Keypair.privateKey.length).toEqual(sdkKeypair.privateKey.length);
+        expect(bip39Keypair.accountHex().substring(0, 2)).toEqual(sdkKeypair.accountHex().substring(0, 2));
+        expect(bip39Keypair.signatureAlgorithm).toEqual('secp256k1');
     });
 
 });

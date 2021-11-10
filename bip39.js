@@ -1,4 +1,5 @@
 const { randomBytes, createHash, createHmac } = require('crypto');
+const { Keys } = require('casper-js-sdk');
 
 const PASSPHRASE = 'SIGNER';
 
@@ -62,6 +63,22 @@ const calculateSlice = (checksumBytes) => {
     return [from, from + 32];
 }
 
+const keypairFromSecretKey = (secretKey, algorithm) => {
+    switch (algorithm) {
+        case 'ed25519': {
+            let parsedSecretKey = Keys.Ed25519.parsePrivateKey(secretKey);
+            let parsedPublicKey = Keys.Ed25519.privateToPublicKey(secretKey);
+            return Keys.Ed25519.parseKeyPair(parsedPublicKey, parsedSecretKey);
+        };
+        case 'secp256k1': {
+            let parsedSecretKey = Keys.Secp256K1.parsePrivateKey(secretKey, 'raw')
+            let parsedPublicKey = Keys.Secp256K1.privateToPublicKey(secretKey);
+            return Keys.Secp256K1.parseKeyPair(parsedPublicKey, parsedSecretKey, 'raw');
+        };
+        default: throw new Error('invalid algorithm provided');
+    }
+}
+
 module.exports = {
     generate256RandomBits,
     getSHA256hash,
@@ -70,5 +87,6 @@ module.exports = {
     generateMnemonic,
     convertMnemonicToSeed,
     hmacSHA512,
-    calculateSlice
+    calculateSlice,
+    keypairFromSecretKey
 }
