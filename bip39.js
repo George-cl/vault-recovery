@@ -1,5 +1,8 @@
 const { randomBytes, createHash, createHmac } = require('crypto');
 const { Keys } = require('casper-js-sdk');
+const { decodeUTF8 } = require('tweetnacl-ts');
+const secp = require('secp256k1');
+const nacl = require('tweetnacl-ts');
 
 const PASSPHRASE = 'SIGNER';
 
@@ -49,8 +52,12 @@ const hmacSHA512 = (key, data) => {
         .digest();
 }
 
-const calculateSlice = (checksumBytes) => {
-    let from = checksumBytes.readUIntBE(0, 1);
+const calculateSlice = (mnemonic) => {
+    let initials = mnemonic.map(word => {
+        return word.substring(0, 1);
+    });
+    let initialBytes = decodeUTF8(initials.join(''));
+    let from = Buffer.from(initialBytes).readUIntBE(12, 1);
     while (from > 64) {
         from = from - 64;
         if (from < 0) {
@@ -63,19 +70,27 @@ const calculateSlice = (checksumBytes) => {
     return [from, from + 32];
 }
 
-const keypairFromSecretKey = (secretKey, algorithm) => {
+// Is there some way to encode the algorithm into the mnemonic?
+const keypairFromMnemonic = (mnemonic, algorithm) => {
+    let seed = convertMnemonicToSeed(mnemonic);
+    let [from, to] = calculateSlice(mnemonic);
+    let secretKey;
     switch (algorithm) {
         case 'ed25519': {
+            let keypair = nacl.sign_keyPair_fromSeed(seed.slice(from, to));
+            secretKey = keypair.secretKey;
             let parsedSecretKey = Keys.Ed25519.parsePrivateKey(secretKey);
             let parsedPublicKey = Keys.Ed25519.privateToPublicKey(secretKey);
             return Keys.Ed25519.parseKeyPair(parsedPublicKey, parsedSecretKey);
         };
         case 'secp256k1': {
+            secretKey = hmacSHA512(mnemonic[23], seed).slice(from, to);
+            if (!secp.privateKeyVerify(secretKey))
+                throw new Error('Invalid SECP256k1 key');
             let parsedSecretKey = Keys.Secp256K1.parsePrivateKey(secretKey, 'raw')
             let parsedPublicKey = Keys.Secp256K1.privateToPublicKey(secretKey);
             return Keys.Secp256K1.parseKeyPair(parsedPublicKey, parsedSecretKey, 'raw');
-        };
-        default: throw new Error('invalid algorithm provided');
+        }
     }
 }
 
@@ -88,5 +103,5 @@ module.exports = {
     convertMnemonicToSeed,
     hmacSHA512,
     calculateSlice,
-    keypairFromSecretKey
+    keypairFromMnemonic
 }

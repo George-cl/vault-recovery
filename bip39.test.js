@@ -1,11 +1,7 @@
-// For Ed25519 key generation
-const nacl = require('tweetnacl-ts');
-// For Secp256k1 key generation
-const secp = require('secp256k1');
-const { Keys } = require('casper-js-sdk');
-
 const bip39 = require('./bip39');
 const wordlist = require('./wordlist/english');
+
+const { newMnemonic, recoverFromMnemonic } = require('./index');
 
 describe('BIP39 implementation', () => {
 
@@ -15,9 +11,7 @@ describe('BIP39 implementation', () => {
         checksummedEntropy,
         mnemonicIndices,
         mnemonicPhrase,
-        seed,
-        ed25519SecretKey,
-        secp256k1SecretKey;
+        seed;
 
     it('should randomly generate 256 bits', () => {
         initialEntropy = bip39.generate256RandomBits();
@@ -70,52 +64,34 @@ describe('BIP39 implementation', () => {
         expect(newSeed).toEqual(seed);
     });
 
-    it('should derive (deterministically) ED25519 keypair from seed', () => {
-        let [from, to] = bip39.calculateSlice(checksum);
-        let keypair = nacl.sign_keyPair_fromSeed(seed.slice(from, to));
-        ed25519SecretKey = keypair.secretKey;
-
-        [from, to] = bip39.calculateSlice(checksum);
-        let keypair2 = nacl.sign_keyPair_fromSeed(seed.slice(from, to));
+    it('should derive (deterministically) ED25519 keypair from phrase', () => {
+        let keypair = bip39.keypairFromMnemonic(mnemonicPhrase, 'ed25519');
+        let keypair2 = bip39.keypairFromMnemonic(mnemonicPhrase, 'ed25519');
 
         expect(keypair).toEqual(keypair2);
     });
 
-    it('should derive (deterministically) SECP256k1 secret key from seed', () => {
-        let [from, to] = bip39.calculateSlice(checksum);
-        secp256k1SecretKey = bip39.hmacSHA512(checksum, seed).slice(from, to);
-        if (!secp.privateKeyVerify(secp256k1SecretKey))
-            throw new Error('Invalid SECP256k1 key');
+    it('should derive (deterministically) SECP256k1 keypair from phrase', () => {
+        let keypair = bip39.keypairFromMnemonic(mnemonicPhrase, 'secp256k1');
+        let keypair2 = bip39.keypairFromMnemonic(mnemonicPhrase, 'secp256k1');
 
-        let secretKey2;
-        [from, to] = bip39.calculateSlice(checksum);
-        secretKey2 = bip39.hmacSHA512(checksum, seed).slice(from, to);
-        if (!secp.privateKeyVerify(secretKey2))
-            throw new Error('Invalid SECP256k1 key');
-
-        expect(secp256k1SecretKey).toEqual(secretKey2);
+        expect(keypair).toEqual(keypair2);
     });
 
-    it('should be able to construct keypair using SDK (ED25519)', () => {
-        let bip39Keypair = bip39.keypairFromSecretKey(ed25519SecretKey, 'ed25519');
-        
-        let sdkKeypair = Keys.Ed25519.new();
+    it('should recover from mnemonic (ed25519) (Exported Method)', () => {
+        let mnemonic = newMnemonic();
+        let keypair1 = recoverFromMnemonic(mnemonic, 'ed25519');
+        let keypair2 = recoverFromMnemonic(mnemonic, 'ed25519');
 
-        expect(bip39Keypair.publicKey.value().length).toEqual(sdkKeypair.publicKey.value().length);
-        expect(bip39Keypair.privateKey.length).toEqual(sdkKeypair.privateKey.length);
-        expect(bip39Keypair.accountHex().substring(0, 2)).toEqual(sdkKeypair.accountHex().substring(0, 2));
-        expect(bip39Keypair.signatureAlgorithm).toEqual('ed25519');
+        expect(keypair1).toEqual(keypair2);
     });
 
-    it('should be able to construct keypair using SDK (SECP256k1)', () => {
-        let bip39Keypair = bip39.keypairFromSecretKey(secp256k1SecretKey, 'secp256k1');
-        
-        let sdkKeypair = Keys.Secp256K1.new();
+    it('should recover from mnemonic (secp256k1) (Exported Method)', () => {
+        let mnemonic = newMnemonic();
+        let keypair1 = recoverFromMnemonic(mnemonic, 'secp256k1');
+        let keypair2 = recoverFromMnemonic(mnemonic, 'secp256k1');
 
-        expect(bip39Keypair.publicKey.value().length).toEqual(sdkKeypair.publicKey.value().length);
-        expect(bip39Keypair.privateKey.length).toEqual(sdkKeypair.privateKey.length);
-        expect(bip39Keypair.accountHex().substring(0, 2)).toEqual(sdkKeypair.accountHex().substring(0, 2));
-        expect(bip39Keypair.signatureAlgorithm).toEqual('secp256k1');
+        expect(keypair1).toEqual(keypair2);
     });
 
 });
