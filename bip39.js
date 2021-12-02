@@ -23,7 +23,7 @@ const appendChecksum = (bytes, hash) => {
 const generateMnemonicIndices = (bytes) => {
     let binary = '';
     for (let i = 0; i < bytes.length; i++) {
-        binary = binary + ('00000000' + bytes[i].toString(2)).slice(-8);
+        binary += ('00000000' + bytes[i].toString(2)).slice(-8);
     }
     return binary.match(/.{1,11}/g).map(binaryChunk => {
         return parseInt(binaryChunk, 2);
