@@ -14,8 +14,9 @@ describe('BIP39 implementation', () => {
         seed;
 
     it('should randomly generate 256 bits', () => {
-        initialEntropy = bip39.generate256RandomBits();
+        initialEntropy = bip39.generateRandomBits(256);
         expect(Buffer.isBuffer(initialEntropy)).toBeTruthy();
+        // 256 bits / 8 bits => 32 bytes
         expect(initialEntropy.length).toEqual(32);
     });
 

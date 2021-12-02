@@ -2,7 +2,7 @@ const bip39 = require('./bip39');
 const wordlist = require('./wordlist/english');
 
 const newMnemonic = () => {
-    let entropy = bip39.generate256RandomBits();
+    let entropy = bip39.generateRandomBits(256);
     let hash = bip39.getSHA256hash(entropy);
     let [, checksummedEntropy] = bip39.appendChecksum(entropy, hash);
     let indices = bip39.generateMnemonicIndices(checksummedEntropy);

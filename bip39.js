@@ -6,9 +6,9 @@ const nacl = require('tweetnacl-ts');
 
 const PASSPHRASE = 'SIGNER';
 
-const generate256RandomBits = () => {
+const generateRandomBits = (numBits) => {
     // 256 / 8 = 32
-    return randomBytes(32);
+    return randomBytes(numBits / 8);
 };
 
 const getSHA256hash = (bytes) => {
@@ -95,7 +95,7 @@ const keypairFromMnemonic = (mnemonic, algorithm) => {
 }
 
 module.exports = {
-    generate256RandomBits,
+    generateRandomBits,
     getSHA256hash,
     appendChecksum,
     generateMnemonicIndices,
