@@ -693,6 +693,13 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
 
+"@types/ws@^8.2.2":
+  version "8.5.3"
+  resolved "https://registry.yarnpkg.com/@types/ws/-/ws-8.5.3.tgz#7d25a1ffbecd3c4f2d35068d0b283c037003274d"
+  integrity sha512-6YOoWjruKj1uLf3INHH7D3qTXwFfEsg1kf3c0uDdSBJwfa/llkwIjrAGV7j7mVgGNbzTQ3HiHKKDXl6bJPD97w==
+  dependencies:
+    "@types/node" "*"
+
 "@types/yargs-parser@*":
   version "20.2.1"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-20.2.1.tgz#3b9ce2489919d9e4fea439b76916abc34b2df129"
@@ -1155,16 +1162,17 @@ caniuse-lite@^1.0.30001274:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001275.tgz#26f5076629fe4e52bbd245f9046ad7b90aafdf57"
   integrity sha512-ihJVvj8RX0kn9GgP43HKhb5q9s2XQn4nEQhdldEJvZhCsuiB2XOq6fAMYQZaN6FPWfsr2qU0cdL0CSbETwbJAg==
 
-casper-js-sdk@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.yarnpkg.com/casper-js-sdk/-/casper-js-sdk-2.7.0.tgz#ffe6ae952452af604c2cbbbdc0b3b6c4c8fadcad"
-  integrity sha512-guHbx7Iv96f5AVUWNm9BZVXD16Z4AiS2ezvCv2ShQI9m40xtBH2sPhWs3GfXH4o4WgHzDXing3UiexXyFf1Q7Q==
+casper-js-sdk@^2.9.1:
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/casper-js-sdk/-/casper-js-sdk-2.9.1.tgz#bbadfe10a0f7e6471c88560e17c16afd1df7f1bd"
+  integrity sha512-UO0meYMucBqoNfplhSys4ELis0e0HDcJRpJa5/e1TIEfCwHGSt30PbHoJ/UXWzWR3nk4YSddQJ3coHCF7IrZoA==
   dependencies:
     "@ethersproject/bignumber" "^5.0.8"
     "@ethersproject/bytes" "^5.0.5"
     "@ethersproject/constants" "^5.0.5"
     "@open-rpc/client-js" "^1.6.2"
     "@types/eccrypto" "^1.1.2"
+    "@types/ws" "^8.2.2"
     blakejs "^1.1.0"
     eccrypto "^1.1.6"
     eslint-plugin-prettier "^3.4.0"

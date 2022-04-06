@@ -5,8 +5,8 @@ interface VaultRecovery {
     recoverFromMnemonic(mnemonic: Array<string>, algorithm: 'ed25519' | 'secp256k1'): Keys.AsymmetricKey;
 }
 
-declare module "vaultrecovery" {
-    const vaultrecovery: VaultRecovery;
+declare module "vault-recovery" {
+    const vaultRecovery: VaultRecovery;
 
-    export default vaultrecovery;
+    export default vaultRecovery;
 }
